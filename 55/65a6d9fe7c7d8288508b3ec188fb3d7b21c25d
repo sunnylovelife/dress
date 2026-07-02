@@ -1,0 +1,66 @@
+requirements.txt
+  s_6a31fb22fdf2d8::t_f7f2ba51926b38 7-8
+  s_6a31fb22fdf2d8::t_d575ff0ba4030f 9
+  s_6a31fb22fdf2d8::t_f72f7aff4a3b1a 4-6
+  s_6a31fb22fdf2d8::t_0d2514f695ed8a 1-3
+app/volc_client.py
+  s_6a31fb22fdf2d8::t_b777600b37aaa7 1-164
+.gitignore
+  s_6a31fb22fdf2d8::t_8339ab367404f5 5-7
+  s_6a31fb22fdf2d8::t_d9d477269ab88d 2-4
+  s_6a31fb22fdf2d8::t_d300b8e71ca11b 8-10
+  s_6a31fb22fdf2d8::t_c716310b69bb3f 1,11-19
+app/web.py
+  s_6a31fb22fdf2d8::t_772bb748324685 1,4-5,7-8,16-17,53-56,69-71,73-75,77-78,97-134
+  s_6a31fb22fdf2d8::t_a65ca13494c85c 58-68,82-95
+  s_6a31fb22fdf2d8::t_cb58a2d3db568e 20,29-43
+  s_6a31fb22fdf2d8::t_211627a15452f1 2-3,6,9-15,18-19,21-27,44-52,57,72,76,79-81,96
+  s_6a31fb22fdf2d8::t_d1b2f65b031e7e 28
+app/kolors_client.py
+  s_6a31fb22fdf2d8::t_77de81bf67f9cd 1-92
+cli.py
+  s_6a31fb22fdf2d8::t_f9d556cfcf102c 94-96
+  s_6a31fb22fdf2d8::t_7cdab28a4d94d8 1-93,97-100
+app/templates/index.html
+  s_6a31fb22fdf2d8::t_15a846662b153d 1-26,35-37,45,49-57,65-69,72-110,187-197,200-228,236-244,258,263,265-273,275-276,290,303-312
+  s_6a31fb22fdf2d8::t_0543fda071a948 229-235,246-250,259-262,264,274,277-289,291-302
+  s_6a31fb22fdf2d8::t_a7b8cbcc5d0786 111-128,130
+  s_6a31fb22fdf2d8::t_91b6b9ee9523d1 245,251-257
+  s_6a31fb22fdf2d8::t_f66036b4cff60f 129,131-186
+  s_6a31fb22fdf2d8::t_7b82cd368f970c 71
+  s_6a31fb22fdf2d8::t_46b56b217e5b54 27-34
+  s_6a31fb22fdf2d8::t_ffa20fd500e592 38-44,46-48
+  s_6a31fb22fdf2d8::t_07039cead7eb72 70
+  s_6a31fb22fdf2d8::t_fa1e944c68e9c2 58-64
+  s_6a31fb22fdf2d8::t_5814dde07648ab 198-199
+app/templates/list.html
+  s_6a31fb22fdf2d8::t_4f957e1c84fa47 1-39
+app/templates/_footer.html
+  s_6a31fb22fdf2d8::t_b6c90f354b2dfb 1-7
+.env.example
+  s_6a31fb22fdf2d8::t_b9e67f473b1cd7 1-3
+app/config.py
+  s_6a31fb22fdf2d8::t_278ce828a12596 1-45
+docs/list.md
+  s_6a31fb22fdf2d8::t_ea3dd195912efa 1-13
+docs/图片换装V2接口文档.md
+  s_6a31fb22fdf2d8::t_d98826f6eb50d3 1-413
+docs/快手hf接入.md
+  s_6a31fb22fdf2d8::t_9faddcc4cbff66 1-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "5565a6d9fe7c7d8288508b3ec188fb3d7b21c25d",
+  "prompts": {},
+  "sessions": {
+    "s_6a31fb22fdf2d8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0e34eef6-90d9-43ea-9b2f-bf060da1ce9f",
+        "model": "zyb-claude"
+      },
+      "human_author": "薛阳阳 <xueyangyang@zuoyebang.com>"
+    }
+  }
+}
