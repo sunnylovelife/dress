@@ -1,0 +1,19 @@
+# 凭证 - 绝不提交
+bin/AccessKey.txt
+.env
+
+# Claude 本地个人配置
+.claude/settings.local.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# 运行产物
+outputs/
+results/
+*.png
+!app/**/*.png

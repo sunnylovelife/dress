@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>虚拟试衣项目对比</title>
+  <style>
+    :root { --accent: #4f46e5; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+           margin: 0; background: #f5f6fa; color: #222; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px 40px; }
+    h1 { font-size: 22px; }
+    .back { display: inline-block; margin-bottom: 12px; color: var(--accent); text-decoration: none; font-size: 14px; }
+    .back:hover { text-decoration: underline; }
+    .card { background: #fff; border-radius: 12px; padding: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    th, td { border: 1px solid #e5e7f0; padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: #f0f1f8; font-weight: 600; position: sticky; top: 0; }
+    tbody tr:nth-child(even) { background: #fafbff; }
+    tbody tr:hover { background: #f3f4ff; }
+    footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid #e5e7f0;
+             font-size: 13px; color: #888; }
+    footer a { color: var(--accent); text-decoration: none; margin-right: 20px; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="/">← 返回换装后台</a>
+  <h1>虚拟试衣项目对比</h1>
+  <div class="card">
+    {{ table_html | safe }}
+  </div>
+
+  {% include "_footer.html" %}
+</div>
+</body>
+</html>

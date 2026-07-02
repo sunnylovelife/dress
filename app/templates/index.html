@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片换装后台</title>
+  <style>
+    :root { --accent: #4f46e5; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+           margin: 0; background: #f5f6fa; color: #222; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+    h1 { font-size: 22px; }
+    .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .row { display: flex; flex-wrap: wrap; gap: 20px; }
+    .col { flex: 1 1 240px; }
+    label.field { display: block; font-weight: 600; margin-bottom: 8px; }
+    .drop { border: 2px dashed #cbd0e0; border-radius: 10px; padding: 12px; text-align: center;
+            cursor: pointer; transition: .15s; background: #fafbff; }
+    .drop:hover { border-color: var(--accent); }
+    .drop img { max-width: 100%; max-height: 220px; border-radius: 6px; display: none; }
+    .drop .hint { color: #888; font-size: 13px; }
+    input[type=file] { display: none; }
+    select, button { font-size: 14px; padding: 8px 10px; border-radius: 8px; border: 1px solid #ccc; }
+    select { width: 100%; margin-top: 8px; }
+    .opts { margin: 16px 0; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .params { margin-top: 20px; border: 1px solid #e5e7f0; border-radius: 10px; padding: 6px 14px 14px; }
+    .params summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
+    .pgroup { margin-top: 12px; }
+    .ptitle { font-size: 13px; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+    .pgrid { display: flex; flex-wrap: wrap; gap: 14px 24px; }
+    .pgrid label { display: flex; flex-direction: column; font-size: 13px; gap: 4px; }
+    .pgrid label:has(input[type=checkbox]) { flex-direction: row; align-items: center; gap: 6px; }
+    .pgrid input[type=number], .pgrid select { width: 200px; }
+    button.primary { background: var(--accent); color: #fff; border: none; padding: 12px 28px;
+                     font-size: 16px; cursor: pointer; }
+    button.primary:disabled { opacity: .5; cursor: not-allowed; }
+    .engines { margin-top: 20px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .engine-pick { border: 1px solid #e5e7f0; border-radius: 10px; padding: 12px 16px; flex: 1 1 300px; }
+    .engine-pick > label { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .engine-pick .desc { color: #888; font-size: 12px; margin: 6px 0 0 24px; }
+    .engine-pick .kparams { margin: 10px 0 0 24px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .engine-pick .kparams label { display: flex; flex-direction: column; font-size: 13px; gap: 4px; }
+    .engine-pick .kparams label:has(input[type=checkbox]) { flex-direction: row; align-items: center; gap: 6px; }
+    .results { margin-top: 24px; }
+    .egroup { margin-bottom: 22px; }
+    .egroup h4 { margin: 0 0 4px; }
+    .egroup .emeta { color: #888; font-size: 12px; margin-bottom: 10px; }
+    .results .grid { display: flex; flex-wrap: wrap; gap: 16px; }
+    .results img { max-width: 260px; border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,.12); }
+    .status { margin-top: 16px; font-size: 14px; }
+    .err { color: #c0392b; }
+    .muted { color: #888; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #ddd;
+               border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite;
+               vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toplink { font-size: 14px; }
+    .toplink a { color: var(--accent); text-decoration: none; }
+    .toplink a:hover { text-decoration: underline; }
+    footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid #e5e7f0;
+             font-size: 13px; color: #888; }
+    footer a { color: var(--accent); text-decoration: none; margin-right: 20px; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>图片换装后台</h1>
+  <p class="muted">上传一张模特图和 1~2 张服装图，选择引擎生成换装效果。可同时勾选两个引擎并排对比。</p>
+  <p class="toplink"><a href="/list">📋 查看虚拟试衣开源项目对比 →</a></p>
+
+  <div class="card">
+    <div class="row">
+      <div class="col">
+        <label class="field">模特图</label>
+        <div class="drop" data-for="model">
+          <img id="model-preview">
+          <div class="hint">点击选择模特图</div>
+        </div>
+        <input type="file" id="model" accept="image/*">
+      </div>
+      <div class="col">
+        <label class="field">服装图 1</label>
+        <div class="drop" data-for="garment1">
+          <img id="garment1-preview">
+          <div class="hint">点击选择服装图</div>
+        </div>
+        <input type="file" id="garment1" accept="image/*">
+        <select id="garment1_type">
+          <option value="full">整套</option>
+          <option value="upper">上衣</option>
+          <option value="bottom">下衣</option>
+        </select>
+      </div>
+      <div class="col">
+        <label class="field">服装图 2 <span class="muted">(可选)</span></label>
+        <div class="drop" data-for="garment2">
+          <img id="garment2-preview">
+          <div class="hint">点击选择服装图</div>
+        </div>
+        <input type="file" id="garment2" accept="image/*">
+        <select id="garment2_type">
+          <option value="bottom">下衣</option>
+          <option value="upper">上衣</option>
+          <option value="full">整套</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="engines">
+      <div class="engine-pick">
+        <label><input type="checkbox" id="use_volcengine" checked> 火山引擎 图片换装 V2</label>
+        <div class="desc">商业接口，按次收费。支持上衣+下衣、大量可控参数。返回多张候选图。</div>
+      </div>
+      <div class="engine-pick">
+        <label><input type="checkbox" id="use_kolors"> 快手 Kolors 虚拟试衣（HF）</label>
+        <div class="desc">免费公共 Space，仅用「服装图 1」单件、无类型区分，速度较慢且可能限流。</div>
+        <div class="kparams">
+          <label title="随机种子，配合下方随机开关使用">
+            种子 (seed)
+            <input type="number" id="kolors_seed" value="0" step="1" style="width:140px;">
+          </label>
+          <label title="勾选则每次随机种子，忽略上面的固定值"><input type="checkbox" id="kolors_randomize" checked> 随机种子</label>
+        </div>
+      </div>
+    </div>
+
+    <details class="params" open>
+      <summary>火山引擎 高级参数</summary>
+
+      <div class="pgroup">
+        <div class="ptitle">保留模特原图区域</div>
+        <div class="pgrid">
+          <label title="保持模特原图的头（含发型）"><input type="checkbox" id="keep_head" checked> 保留头/发型</label>
+          <label title="保持模特原图的手"><input type="checkbox" id="keep_hand"> 保留手</label>
+          <label title="保持模特原图的足"><input type="checkbox" id="keep_foot"> 保留脚</label>
+          <label title="不更换上装，保留模特原图上衣"><input type="checkbox" id="keep_upper"> 保留原上装</label>
+          <label title="不更换下装，保留模特原图下衣"><input type="checkbox" id="keep_lower"> 保留原下装</label>
+        </div>
+      </div>
+
+      <div class="pgroup">
+        <div class="ptitle">生成质量与细节</div>
+        <div class="pgrid">
+          <label title="对结果做超分辨率放大，更清晰但更慢">
+            <input type="checkbox" id="do_sr"> 超分处理
+          </label>
+          <label title="推理步数，越大细节可能越好但越慢。范围 8~50，默认 16">
+            推理步数 (num_steps)
+            <input type="number" id="num_steps" value="16" min="8" max="50" step="1">
+          </label>
+          <label title="随机种子。-1 表示每次随机；固定值可复现同一结果">
+            随机种子 (seed)
+            <input type="number" id="seed" value="-1" step="1">
+          </label>
+          <label title="输入图最大边长超过此值会先缩放。范围 1080~4096，默认 1920">
+            最大边长 (max_process_side_length)
+            <input type="number" id="max_process_side_length" value="1920" min="1080" max="4096" step="1">
+          </label>
+        </div>
+      </div>
+
+      <div class="pgroup">
+        <div class="ptitle">遮挡区域 / 多人场景</div>
+        <div class="pgrid">
+          <label title="模特图换装遮挡区域范围">
+            遮挡范围 (tight_mask)
+            <select id="tight_mask">
+              <option value="loose" selected>loose（上窄下宽，默认）</option>
+              <option value="tight">tight（上窄下窄）</option>
+              <option value="bbox">bbox（上宽下宽）</option>
+            </select>
+          </label>
+          <label title="画面多人时，每个人 bbox 与主体相交比例。范围 0~1，默认 0.3">
+            bbox 相交比例 (p_bbox_iou_ratio)
+            <input type="number" id="p_bbox_iou_ratio" value="0.3" min="0" max="1" step="0.05">
+          </label>
+          <label title="推理时 bbox 扩大比例。范围 1.0~1.5，默认 1.1">
+            bbox 扩大比例 (p_bbox_expand_ratio)
+            <input type="number" id="p_bbox_expand_ratio" value="1.1" min="1.0" max="1.5" step="0.05">
+          </label>
+        </div>
+      </div>
+    </details>
+
+    <div class="opts">
+      <button class="primary" id="submit">生成换装图</button>
+    </div>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="results card" id="results" style="display:none;">
+    <h3>生成结果</h3>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  {% include "_footer.html" %}
+</div>
+
+<script>
+  // 点击预览区触发文件选择 + 预览
+  document.querySelectorAll('.drop').forEach(drop => {
+    const id = drop.dataset.for;
+    const input = document.getElementById(id);
+    const preview = document.getElementById(id + '-preview');
+    drop.addEventListener('click', () => input.click());
+    input.addEventListener('change', () => {
+      const file = input.files[0];
+      if (!file) return;
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+      drop.querySelector('.hint').textContent = file.name;
+    });
+  });
+
+  const statusEl = document.getElementById('status');
+  const btn = document.getElementById('submit');
+
+  btn.addEventListener('click', async () => {
+    const model = document.getElementById('model').files[0];
+    const g1 = document.getElementById('garment1').files[0];
+    if (!model || !g1) {
+      statusEl.innerHTML = '<span class="err">请至少上传模特图和服装图 1</span>';
+      return;
+    }
+
+    const useVolc = document.getElementById('use_volcengine').checked;
+    const useKolors = document.getElementById('use_kolors').checked;
+    if (!useVolc && !useKolors) {
+      statusEl.innerHTML = '<span class="err">请至少选择一个引擎</span>';
+      return;
+    }
+
+    const fd = new FormData();
+    fd.append('model', model);
+    fd.append('garment1', g1);
+    fd.append('garment1_type', document.getElementById('garment1_type').value);
+    const g2 = document.getElementById('garment2').files[0];
+    if (g2) {
+      fd.append('garment2', g2);
+      fd.append('garment2_type', document.getElementById('garment2_type').value);
+    }
+
+    // 引擎选择
+    fd.append('use_volcengine', useVolc);
+    fd.append('use_kolors', useKolors);
+
+    // 火山 inference_config 参数
+    ['do_sr','keep_head','keep_hand','keep_foot','keep_upper','keep_lower'].forEach(id => {
+      fd.append(id, document.getElementById(id).checked);
+    });
+    ['seed','num_steps','max_process_side_length','p_bbox_iou_ratio','p_bbox_expand_ratio'].forEach(id => {
+      fd.append(id, document.getElementById(id).value);
+    });
+    fd.append('tight_mask', document.getElementById('tight_mask').value);
+
+    // Kolors 参数
+    fd.append('kolors_seed', document.getElementById('kolors_seed').value);
+    fd.append('kolors_randomize', document.getElementById('kolors_randomize').checked);
+
+    btn.disabled = true;
+    statusEl.innerHTML = '<span class="spinner"></span>生成中，请稍候（约需 1~2 分钟，多引擎并发）……';
+    document.getElementById('results').style.display = 'none';
+
+    try {
+      const resp = await fetch('/api/dress', { method: 'POST', body: fd });
+      const data = await resp.json();
+      if (!resp.ok) {
+        statusEl.innerHTML = '<span class="err">失败：' + (data.error || resp.status) + '</span>';
+        return;
+      }
+
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      const results = data.results || [];
+      const errors = data.errors || [];
+
+      results.forEach(r => {
+        const group = document.createElement('div');
+        group.className = 'egroup';
+        const imgs = (r.images || []).map(u =>
+          '<a href="' + u + '" target="_blank"><img src="' + u + '"></a>'
+        ).join('');
+        group.innerHTML = '<h4>' + r.engine + '</h4>' +
+          '<div class="emeta">' + (r.meta || '') + ' · ' + (r.images || []).length + ' 张</div>' +
+          '<div class="grid">' + imgs + '</div>';
+        grid.appendChild(group);
+      });
+
+      errors.forEach(e => {
+        const group = document.createElement('div');
+        group.className = 'egroup';
+        group.innerHTML = '<h4>' + e.engine + '</h4>' +
+          '<div class="emeta err">失败：' + e.error + '</div>';
+        grid.appendChild(group);
+      });
+
+      const okCount = results.length, errCount = errors.length;
+      statusEl.innerHTML = '完成：' + okCount + ' 个引擎成功' +
+        (errCount ? '，' + errCount + ' 个失败' : '') + '。';
+      document.getElementById('results').style.display = 'block';
+    } catch (e) {
+      statusEl.innerHTML = '<span class="err">请求异常：' + e + '</span>';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
